@@ -4,15 +4,15 @@ Shader "URPPractice/BRDF/Disney"
     {
         [MainColor] _BaseColor("Color", Color) = (1, 1, 1, 1)
         _Metallic("Metallic",Range(0.0, 1.0)) = 0.5
-        _Subsurface("Subsurface",float) = 0.5
-        _Specular("Specular",float) = 0.5
-        _Roughness ("Roughness",float) = 0.5
-        _SpecularTint("SpecularTint",float) = 0.5
-        _Anisotropic("Anisotropic",float) = 0.5 
-        _Sheen("Sheen",float) = 0.5
-        _SheenTint("SheenTint",float) = 0.5
-        _Clearcoat("Clearcoat",float) = 0.5
-        _ClearcoatGloss("ClearcoatGloss",float) = 0.5 
+        _Subsurface("Subsurface",Range(0.0, 1.0)) = 0.5
+        _Specular("Specular",Range(0.0, 1.0)) = 0.5
+        _Roughness ("Roughness",Range(0.0, 1.0)) = 0.5
+        _SpecularTint("SpecularTint",Color) = (1, 1, 1, 1)
+        _Anisotropic("Anisotropic",Range(0.0, 1.0)) = 0.5 
+        _Sheen("Sheen",Range(0.0, 1.0)) = 0.5
+        _SheenTint("SheenTint",Color) = (1, 1, 1, 1)
+        _Clearcoat("Clearcoat",Range(0.0, 1.0)) = 0.5
+        _ClearcoatGloss("ClearcoatGloss",Range(0.0, 1.0)) = 0.5 
     }
     SubShader
     {
@@ -68,10 +68,10 @@ Shader "URPPractice/BRDF/Disney"
                 UNITY_DEFINE_INSTANCED_PROP(float, _Subsurface)
                 UNITY_DEFINE_INSTANCED_PROP(float, _Specular)
                 UNITY_DEFINE_INSTANCED_PROP(float, _Roughness)
-                UNITY_DEFINE_INSTANCED_PROP(float, _SpecularTint)
+                UNITY_DEFINE_INSTANCED_PROP(float4, _SpecularTint)
                 UNITY_DEFINE_INSTANCED_PROP(float, _Anisotropic)
                 UNITY_DEFINE_INSTANCED_PROP(float, _Sheen)
-                UNITY_DEFINE_INSTANCED_PROP(float, _SheenTint)
+                UNITY_DEFINE_INSTANCED_PROP(float4, _SheenTint)
                 UNITY_DEFINE_INSTANCED_PROP(float, _Clearcoat)
                 UNITY_DEFINE_INSTANCED_PROP(float, _ClearcoatGloss)
             UNITY_INSTANCING_BUFFER_END(UnityPerMatrial)
@@ -154,10 +154,10 @@ Shader "URPPractice/BRDF/Disney"
                 float subsurface  = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Subsurface);
                 float specular  = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Specular);
                 float roughness  = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Roughness);
-                float specularTint  = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_SpecularTint);
+                float4 specularTint  = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_SpecularTint);
                 float anisotropic  = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Anisotropic);
                 float sheen  = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Sheen);
-                float sheenTint  = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_SheenTint);
+                float4 sheenTint  = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_SheenTint);
                 float clearcoat  = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Clearcoat);
                 float clearcoatGloss  = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_ClearcoatGloss);
 
@@ -170,12 +170,13 @@ Shader "URPPractice/BRDF/Disney"
                 float3 Y = 0.5;
 
                 ///////////////////////////////////////////////////////////////////////////////
-                //                      BRDF                                                //
+                //                      BRDF:https://zhuanlan.zhihu.com/p/60977923           //
                 ///////////////////////////////////////////////////////////////////////////////
                 half3 finalColor = float3(0,0,0);
                 float NdotL = dot(N,L);
                 float NdotV = dot(N,V);
-                if (NdotL < 0 || NdotV < 0) return half4(finalColor,1);
+                //if (NdotL < 0 || NdotV < 0) return half4(finalColor,1);
+                if (NdotL < 0) return half4(finalColor,1);
 
                 // float3 H = normalize(L+V);
                 float NdotH = dot(N,H);

@@ -57,26 +57,28 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Anisotropic: 1
+    - _Anisotropic: 0
     - _Blend: 1
-    - _Clearcoat: 1
-    - _ClearcoatGloss: 1
+    - _Clearcoat: 0
+    - _ClearcoatGloss: 0
     - _DstBlend: 0
     - _F0: 0.04
-    - _Metallic: 0.5
-    - _Roughness: 1
+    - _Metallic: 1
+    - _Roughness: 0.487
     - _Sheen: 1
-    - _SheenTint: 1
+    - _SheenTint: 0.69
     - _Smooth: 0
     - _Smoothness: 0.5
     - _Soom: 0
-    - _Specular: 1
-    - _SpecularTint: 1
+    - _Specular: 0
+    - _SpecularTint: 0.3
     - _SrcBlend: 1
-    - _Subsurface: 1
+    - _Subsurface: 0
     - _roughness: 0.5
     - roughness: 0.5
     m_Colors:
     - _BaseColor: {r: 0.82, g: 0.67, b: 0.16, a: 1}
+    - _SheenTint: {r: 1, g: 1, b: 1, a: 1}
     - _Specular: {r: 1, g: 1, b: 1, a: 1}
+    - _SpecularTint: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
