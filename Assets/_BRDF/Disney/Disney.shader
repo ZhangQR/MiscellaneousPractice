@@ -176,7 +176,7 @@ Shader "URPPractice/BRDF/Disney"
                 float NdotL = dot(N,L);
                 float NdotV = dot(N,V);
                 //if (NdotL < 0 || NdotV < 0) return half4(finalColor,1);
-                if (NdotL < 0) return half4(finalColor,1);
+                if (NdotL < 0) return half4(finalColor * light.color * light.distanceAttenuation * NdotL,1);
 
                 // float3 H = normalize(L+V);
                 float NdotH = dot(N,H);
@@ -224,7 +224,7 @@ Shader "URPPractice/BRDF/Disney"
                 finalColor = ((1/PI) * lerp(Fd, ss, subsurface)*Cdlin + Fsheen)
                     * (1-metallic)
                     + Gs*Fs*Ds + .25*clearcoat*Gr*Fr*Dr;
-                return half4(finalColor,1);
+                return half4(finalColor * light.color * light.distanceAttenuation * NdotL,1);
             }
             ENDHLSL
         }

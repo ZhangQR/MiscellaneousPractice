@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Cook-Torrance
-  m_Shader: {fileID: 4800000, guid: 19b4ae1942794f343b1eeb36c6d06ef2, type: 3}
-  m_ShaderKeywords: _ModsMapOn _Mods_Map_On
+  m_Name: Lit
+  m_Shader: {fileID: 4800000, guid: cc5ecf785f4a7384ebab8b417329ba1a, type: 3}
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -23,24 +23,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _AlbedoMap:
-        m_Texture: {fileID: 2800000, guid: d62fff94f36de5e4fbaecb85ac7b509f, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _BaseMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _HeightMap:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _IrradianceMap:
-        m_Texture: {fileID: 8900000, guid: 25504246eaaf7d94e8434ba25a64990a, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MODSMap:
-        m_Texture: {fileID: 2800000, guid: 11fe593b3bec78243a78ed09ed4e8aef, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MeMap:
@@ -52,7 +40,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
-        m_Texture: {fileID: 2800000, guid: 40d924fcdcddb4f4eb39c4d4597cfe67, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OccluMap:
@@ -69,38 +57,16 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - Ues_Texture: 0
-    - _Anisotropic: 0
     - _Blend: 1
-    - _Clearcoat: 0
-    - _ClearcoatGloss: 0
     - _DstBlend: 0
     - _F0: 0.04
-    - _Metallic: 1
-    - _ModsMapOn: 1
-    - _NormalScale: 1
-    - _Occ: 0.5
-    - _Occlusion: 0
-    - _Occulusion: 0.5
-    - _Roughness: 1
-    - _Sheen: 1
-    - _SheenTint: 0.69
+    - _Metallic: 0.5
+    - _Roughness: 0.63
     - _Smooth: 0
     - _Smoothness: 0.5
     - _Soom: 0
-    - _Specular: 0
-    - _SpecularTint: 0.3
     - _SrcBlend: 1
-    - _Subsurface: 0
-    - _UesEnvirnment: 0
-    - _UesEnvironment: 0
-    - _UesTexture: 0
-    - _Ues_Texture: 0
-    - _roughness: 0.5
-    - roughness: 0.5
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SheenTint: {r: 1, g: 1, b: 1, a: 1}
     - _Specular: {r: 1, g: 1, b: 1, a: 1}
-    - _SpecularTint: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

@@ -220,7 +220,8 @@ Shader "URPPractice/BRDF/Cook_Torrance"
 
                 // add to outgoing radiance Lo
                 float NdotL = max(dot(N, L), 0.0);                
-                Lo += (kD * albedo / PI + specular) * radiance * NdotL; // 这里没有 *kS 是因为 F 已经乘过了
+                // Lo += (kD * albedo / PI + specular) * radiance * NdotL; // 这里没有 *kS 是因为 F 已经乘过了，没有 PI 效果甚至更好一点
+                Lo += (kD * albedo + specular) * radiance * NdotL; 
 
                 ///////////////////////////////////////////////////////////////////////////////
                 //                           BRDF : 间接光                                    //
@@ -232,8 +233,8 @@ Shader "URPPractice/BRDF/Cook_Torrance"
                 float3 kDEvr = 1.0 - kSEvr;
                 float3 irradiance = SAMPLE_TEXTURECUBE(_IrradianceMap,sampler_IrradianceMap,N).rgb;
                 float3 diffuse    = irradiance * albedo;
-                // float3 ambient    = (kDEvr * diffuse) * ao;  // 正确应该是这样，但上面那个 F0,为什么那么写，没搞懂，albedo 中的金属是黄色的，难道反射率是 (0.8,0.8,0) 嘛？
-                float3 ambient    = diffuse * ao;
+                float3 ambient    = (kDEvr * diffuse) * ao;  // 正确应该是这样，但上面那个 F0,为什么那么写，没搞懂，albedo 中的金属是黄色的，难道反射率是 (0.8,0.8,0) 嘛？
+                //float3 ambient    = diffuse * ao;
                 #else
                 float3 ambient = float3(0.03,0.03,0.03) * albedo * ao;
                 #endif
@@ -243,7 +244,7 @@ Shader "URPPractice/BRDF/Cook_Torrance"
                 // color = color / (color + float3(1.0,1.0,1.0));
                 // color = pow(color, float3(1.0,1.0,1.0) / 2.2);
 
-                return float4(color ,1.0);
+                return float4(color,1.0);
             }
             ENDHLSL
         }

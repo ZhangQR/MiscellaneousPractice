@@ -64,7 +64,7 @@ Material:
     - _DstBlend: 0
     - _F0: 0.04
     - _Metallic: 1
-    - _Roughness: 0.487
+    - _Roughness: 0.777
     - _Sheen: 1
     - _SheenTint: 0.69
     - _Smooth: 0
