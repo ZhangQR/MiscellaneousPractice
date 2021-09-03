@@ -75,6 +75,7 @@
 			fixed4 texB = tex2D(_MainTex, uvwB.xy) * uvwB.z;
 
 			fixed4 c = (texA + texB) * _Color;
+			//fixed4 c = texA * _Color;
 			o.Albedo = c.rgb;
 			o.Metallic = _Metallic;
 			o.Smoothness = _Glossiness;
