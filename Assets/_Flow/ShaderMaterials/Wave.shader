@@ -1,43 +1,33 @@
-Shader "URPPractice/Flow/DistortionFlow"
+Shader "URPPractice/Flow/Wave"
 {
     Properties
     {
         [MainTexture] _BaseMap("Albedo", 2D) = "white" {}
         [MainColor] _BaseColor("Color", Color) = (1,1,1,1)
+        
         _Smoothness("Smoothness", Range(0.0, 1.0)) = 0.5
         _Metallic("Metallic", Range(0.0, 1.0)) = 0.0
-        _FlowSpeed("FlowSpeed", Float) = 1.0
-        _FlowScale("FlowScale", Float) = 1.0
-        [NoScaleOffset] _DerivHeightMap ("Deriv (AG) Height (B)", 2D) = "black" {}
-        [NoScaleOffset]_FlowMap("Flow Map", 2D) = "gray"{}
-        _UJump ("U jump per phase", Range(-0.25, 0.25)) = 0.25
-		_VJump ("V jump per phase", Range(-0.25, 0.25)) = 0.25
-        _Tiling ("Tiling", Float) = 1
-        _FlowOffset ("Flow Offset", Float) = 0
-        _HeightScale ("Height Scale, Constant", Float) = 0.25
-		_HeightScaleModulated ("Height Scale, Modulated", Float) = 0.75
-
+        // _FlowSpeed("FlowSpeed",float) = 1    //  _FlowSpeed 与 _Period 关联 
+        //_Amplitude("Amplitude",float) = 1     // _Amplitude 与 _Period 关联  
+//        _Steepness ("Steepness", Range(0, 1)) = 0.5
+//        _Period("Period",float) = 1
+//        _Direction ("Direction (2D)", Vector) = (1,0,0,0)         // 挤一挤，合并一下
+        _WaveA ("Wave A (dir, steepness(0,1), wavelength)", Vector) = (1,0,0.5,10)
+        _WaveB ("Wave B", Vector) = (0,1,0.25,20)
+        _WaveC ("Wave C", Vector) = (0,1,0.25,20)
+        _WaveD ("Wave D", Vector) = (0,1,0.25,20)   // 所有波长的 steepness 加起来不能超过 1
     }
 
     SubShader
     {
-        // Universal Pipeline tag is required. If Universal render pipeline is not set in the graphics settings
-        // this Subshader will fail. One can add a subshader below or fallback to Standard built-in to make this
-        // material work with both Universal Render Pipeline and Builtin Unity Pipeline
         Tags{"RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" "UniversalMaterialType" = "Lit" "IgnoreProjector" = "True" "ShaderModel"="4.5"}
         LOD 300
-
-        // ------------------------------------------------------------------
-        //  Forward pass. Shades all light in a single pass. GI + emission + Fog
         Pass
         {
-            // Lightmode matches the ShaderPassName set in UniversalRenderPipeline.cs. SRPDefaultUnlit and passes with
-            // no LightMode tag are also rendered by Universal Render Pipeline
-            Name "DistortionFlow"
+            Name "Wave"
             Tags{"LightMode" = "UniversalForward"}
             
             Blend One Zero
-            ZWrite On
             Cull Off
 
             HLSLPROGRAM
@@ -60,7 +50,7 @@ Shader "URPPractice/Flow/DistortionFlow"
             #pragma multi_compile _ LIGHTMAP_ON
             #pragma multi_compile_fog
 
-            //#pragma enable_d3d11_debug_symbols
+            #pragma enable_d3d11_debug_symbols
 
             //--------------------------------------
             // GPU Instancing
@@ -71,7 +61,6 @@ Shader "URPPractice/Flow/DistortionFlow"
             #pragma fragment LitPassFragment
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
-            // #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/SurfaceInput.hlsl"
 
             struct Attributes
             {
@@ -98,16 +87,18 @@ Shader "URPPractice/Flow/DistortionFlow"
             };
 
             TEXTURE2D(_BaseMap);            SAMPLER(sampler_BaseMap);
-            TEXTURE2D(_BumpMap);            SAMPLER(sampler_BumpMap);
-            TEXTURE2D(_FlowMap);            SAMPLER(sampler_FlowMap);
-            TEXTURE2D(_DerivHeightMap);        SAMPLER(sampler_DerivHeightMap);
-            
 
             CBUFFER_START(UnityPerMaterial)
             float4 _BaseMap_ST;
             half4 _BaseColor;
-            half _Smoothness,_Metallic,_BumpScale;
-            float _FlowSpeed,_FlowScale,_UJump, _VJump, _Tiling, _FlowOffset,_HeightScale, _HeightScaleModulated;
+            half _Smoothness;
+            half _Metallic;
+            // float _FlowSpeed;
+            // float _Amplitude;
+            // float _Period;
+            // float _Steepness;
+            // float2 _Direction;
+            float4 _WaveA,_WaveB,_WaveC,_WaveD;
             CBUFFER_END
 
             void InitializeInputData(Varyings input, half3 normalTS, out InputData inputData)
@@ -162,7 +153,8 @@ Shader "URPPractice/Flow/DistortionFlow"
                 outSurfaceData.specular = half3(0.0h, 0.0h, 0.0h);
 
                 outSurfaceData.smoothness = _Smoothness;
-                outSurfaceData.normalTS = UnpackNormalScale(SAMPLE_TEXTURE2D(_BumpMap, sampler_BumpMap, uv),_BumpScale);
+                //outSurfaceData.normalTS = UnpackNormalScale(SAMPLE_TEXTURE2D(_BumpMap, sampler_BumpMap, uv),_BumpScale);
+                outSurfaceData.normalTS = float3(0,0,1);
                 // outSurfaceData.normalTS = normalize(float3(2,2,1));
                 
                 outSurfaceData.occlusion = 0;
@@ -172,6 +164,38 @@ Shader "URPPractice/Flow/DistortionFlow"
                 outSurfaceData.clearCoatSmoothness = 0.0h;
             }
 
+            float3 GerstnerWave (
+			float4 wave, float3 p, inout float3 tangent, inout float3 binormal)
+			{
+		        float steepness = wave.z;
+		        float wavelength = wave.w;
+		        float k = 2 * PI / wavelength;
+			    float c = sqrt(9.8 / k);
+			    float2 d = normalize(wave.xy);
+			    float f = k * (dot(d, p.xz) - c * _Time.y);
+			    float a = steepness / k;
+			    
+			    //p.x += d.x * (a * cos(f));
+			    //p.y = a * sin(f);
+			    //p.z += d.y * (a * cos(f));
+
+			    tangent += float3(
+				    -d.x * d.x * (steepness * sin(f)),
+				    d.x * (steepness * cos(f)),
+				    -d.x * d.y * (steepness * sin(f))
+			    );
+			    binormal += float3(
+				    -d.x * d.y * (steepness * sin(f)),
+				    d.y * (steepness * cos(f)),
+				    -d.y * d.y * (steepness * sin(f))
+			    );
+			    return float3(
+				    d.x * (a * cos(f)),
+				    a * sin(f),
+				    d.y * (a * cos(f))
+			    );
+		    }
+
             ///////////////////////////////////////////////////////////////////////////////
             //                  Vertex and Fragment functions                            //
             ///////////////////////////////////////////////////////////////////////////////
@@ -180,12 +204,98 @@ Shader "URPPractice/Flow/DistortionFlow"
             Varyings LitPassVertex(Attributes input)
             {
                 Varyings output = (Varyings)0;
-                VertexPositionInputs vertexInput = GetVertexPositionInputs(input.positionOS.xyz);
-                VertexNormalInputs normalInput = GetVertexNormalInputs(input.normalOS, input.tangentOS);
 
+            ///////////////////////////////////////////////////////////////////////////////
+            //                  Sin Wave                                                 //
+            ///////////////////////////////////////////////////////////////////////////////
+
+                // // 改变顶点位置
+                // float k = 2 * PI / _Period;
+                // float f = k * input.positionOS.x - _Time.y * _FlowSpeed;
+                // float y = _Amplitude * sin(f);
+                // float3 positionOS = input.positionOS;
+                // positionOS.y = y;
+                // VertexPositionInputs vertexInput = GetVertexPositionInputs(positionOS.xyz);
+                //
+                // // 计算法线方向
+                // // tangent = P'(x,asin(f)),     f=(kx+time)
+                // // tangent = (1,akcos(f)),      normal = (-tangent.y,tangent,x)
+                // float3 tangent = normalize(float3(1,_Amplitude*k*cos(f),0));
+                // float3 normal = float3(-tangent.y,tangent.x,0);
+                // VertexNormalInputs normalInput = GetVertexNormalInputs(normal, float4(tangent,1));
+                //
+                // half3 viewDirWS = GetWorldSpaceViewDir(vertexInput.positionWS);
+                // half3 vertexLight = VertexLighting(vertexInput.positionWS, normalInput.normalWS);
+                // half fogFactor = ComputeFogFactor(vertexInput.positionCS.z);
+
+            // ///////////////////////////////////////////////////////////////////////////////
+            // //                  Gerstner Wave                                            //
+            // ///////////////////////////////////////////////////////////////////////////////
+            //     // 改变顶点位置
+            //     float k = 2 * PI / _Period;
+            //     float speed = sqrt(9.8/k);
+            //     float f = k * input.positionOS.x - _Time.y * speed;
+            //     float3 positionOS = input.positionOS;
+            //     float a = _Steepness / k;
+            //     positionOS.x += a * cos(f);
+            //     //positionOS.x = a * cos(f);
+            //     positionOS.y = a * sin(f);
+            //     VertexPositionInputs vertexInput = GetVertexPositionInputs(positionOS.xyz);
+            //
+            //     // 没有引进 _Steepness 前
+            //     // // 计算法线方向
+            //     // // tangent = P'(x+acos(f),asin(f)),     f=(kx+time)
+            //     // // tangent = (1-aksin(f),akcos(f)),      normal = (-tangent.y,tangent,x)
+            //     // float3 tangent = normalize(float3(1 - _Amplitude * k * sin(f),_Amplitude*k*cos(f),0));
+            //     // float3 normal = float3(-tangent.y,tangent.x,0);
+            //     // VertexNormalInputs normalInput = GetVertexNormalInputs(normal, float4(tangent,1));
+            //
+            //     float3 tangent = normalize(float3(1 - _Steepness * k * sin(f),_Steepness*k*cos(f),0));
+            //     float3 normal = float3(-tangent.y,tangent.x,0);
+            //     VertexNormalInputs normalInput = GetVertexNormalInputs(normal, float4(tangent,1));
+
+            ///////////////////////////////////////////////////////////////////////////////
+            //                  Gerstner Wave Direction                                  //
+            ///////////////////////////////////////////////////////////////////////////////
+                // // 改变顶点位置
+                // float k = 2 * PI / _Period;
+                // float speed = sqrt(9.8/k);
+                // float2 d = normalize(_Direction);
+                // float f = k * dot(d,input.positionOS.xz) - _Time.y * speed;
+                // float3 positionOS = input.positionOS;
+                // float a = _Steepness / k;
+                // positionOS.x += d.x * a * cos(f);
+                // //positionOS.x = a * cos(f);
+                // positionOS.y = a * sin(f);
+                // positionOS.z += d.y * a * cos(f);
+                // VertexPositionInputs vertexInput = GetVertexPositionInputs(positionOS.xyz);
+                //
+                // // P(x+d_x*s/kcos(f), s/ksin(f), z+d_y*s/kcos(f)),  f=k*(d_x*x+d_y*z)-t;
+                // // f' = k*d_x,  T = (1-d_x^2ssin(f),    d_xscos(f),    -d_xd_yssin(f))
+                // // N = (-d_xd_yssin(f),     d_yscos(f),    1-d_y^2ssin(f))
+                // float3 tangent = float3(1 - _Steepness *d.x*d.x * sin(f),_Steepness*d.x*cos(f),-d.x*d.y*_Steepness*sin(f));
+                // float3 biNormal = float3(-d.x*d.y*_Steepness*sin(f),d.y*_Steepness*cos(f),1-d.y*d.y*_Steepness*sin(f));
+                // float3 normal = normalize(cross(biNormal,tangent));
+                // VertexNormalInputs normalInput = GetVertexNormalInputs(normal, float4(tangent,1));
+
+
+                float3 gridPoint = input.positionOS.xyz;
+			    float3 tangent = float3(1, 0, 0);
+			    float3 binormal = float3(0, 0, 1);
+			    float3 p = gridPoint;
+			    p += GerstnerWave(_WaveA, gridPoint, tangent, binormal);
+                p += GerstnerWave(_WaveB, gridPoint, tangent, binormal);
+                p += GerstnerWave(_WaveC, gridPoint, tangent, binormal);
+                //p += GerstnerWave(_WaveD, gridPoint, tangent, binormal);
+                float3 normal = normalize(cross(binormal,tangent));
+                VertexPositionInputs vertexInput = GetVertexPositionInputs(p.xyz);
+                VertexNormalInputs normalInput = GetVertexNormalInputs(normal, float4(tangent,1));
+
+                
                 half3 viewDirWS = GetWorldSpaceViewDir(vertexInput.positionWS);
                 half3 vertexLight = VertexLighting(vertexInput.positionWS, normalInput.normalWS);
                 half fogFactor = ComputeFogFactor(vertexInput.positionCS.z);
+
 
                 output.uv = TRANSFORM_TEX(input.texcoord, _BaseMap);
 
@@ -205,57 +315,20 @@ Shader "URPPractice/Flow/DistortionFlow"
                 return output;
             }
 
-            float3 GetFlowingUV(float2 uv,float4 flow,float2 jump, float flowOffset,float tiling, float time,float offset)
-            {
-                float t = frac(time+offset);
-                // flow.xy = flow.xy * step(0.05,abs(flow.xy)) ; // 去掉 -0.02 到 0.02 之间的，因为 128 不是 127.5，所以静止会有偏差
-                float3 uvw;
-                
-                uvw.xy = uv - (t + flowOffset) * flow.xy;
-                uvw.xy *= tiling;
-                uvw.xy += offset;
-
-                uvw.xy += (time-t)*jump;
-                uvw.z = 1 - abs(1 - 2 * t);
-                return uvw;
-            }
-
-            float3 UnpackDerivativeHeight (float4 textureData)
-            {
-			    float3 dh = textureData.agb;
-			    dh.xy = dh.xy * 2 - 1;
-			    return dh;
-		    }
-
             // Used in Standard (Physically Based) shader
             half4 LitPassFragment(Varyings input) : SV_Target
             {
-                float4 flow = SAMPLE_TEXTURE2D(_FlowMap,sampler_FlowMap,input.uv);
-                float time = _Time.y  * _FlowSpeed + flow.a;
-                flow.xy = flow.xy * 2-1;
-                flow *= _FlowScale;
-                float2 jump = float2(_UJump, _VJump);
-
-                float3 uvwA =  GetFlowingUV(input.uv,flow,jump,_FlowOffset,_Tiling,time,0.0);
-                float4 First = SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap,uvwA.xy) * uvwA.z;
-
-                float3 uvwB =  GetFlowingUV(input.uv,flow,jump,_FlowOffset,_Tiling,time,0.5);
-                float4 Second = SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap,uvwB.xy) * uvwB.z;
-
-                float finalHeightScale = flow.b * _HeightScaleModulated + _HeightScale;
-                float3 dhA = UnpackDerivativeHeight(SAMPLE_TEXTURE2D(_DerivHeightMap,sampler_DerivHeightMap,uvwA.xy)) * uvwA.z * finalHeightScale;
-                float3 dhB = UnpackDerivativeHeight(SAMPLE_TEXTURE2D(_DerivHeightMap,sampler_DerivHeightMap,uvwB.xy)) * uvwB.z * finalHeightScale;
-                float4 c = (First+Second)*_BaseColor;
-
                 SurfaceData surfaceData;
                 InitializeStandardLitSurfaceData(input.uv, surfaceData);
-                surfaceData.normalTS = normalize(float3(-(dhA.xy + dhB.xy),1));
-                surfaceData.albedo = c;
 
                 InputData inputData;
                 InitializeInputData(input, surfaceData.normalTS, inputData);
-                
+
                 half4 color = UniversalFragmentPBR(inputData, surfaceData);
+
+                color.rgb = MixFog(color.rgb, inputData.fogCoord);
+                // color.a = OutputAlpha(color.a, _Surface);
+
                 return color;
             }
 

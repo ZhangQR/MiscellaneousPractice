@@ -1,4 +1,4 @@
-Shader "UPRPractice/Flow/FlowMap"
+Shader "URPPractice/Flow/FlowMap"
 {
     Properties
     {

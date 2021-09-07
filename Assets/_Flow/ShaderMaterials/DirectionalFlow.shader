@@ -1,4 +1,4 @@
-Shader "UPRPractice/Flow/Directional"
+Shader "URPPractice/Flow/Directional"
 {
     Properties
     {
