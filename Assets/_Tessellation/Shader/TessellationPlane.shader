@@ -1,4 +1,4 @@
-Shader "Unlit/TessShader"
+Shader "URPPractice/TessPlaneShader"
 {
     Properties
     {
@@ -88,7 +88,7 @@ Shader "Unlit/TessShader"
                     o.edge[1] = _TessellationUniform;
                     o.edge[2] = _TessellationUniform;
                     o.inside  = _TessellationUniform;
-                    return o;
+                    return o; 
                 }
 
                 [UNITY_domain("tri")]//确定图元，quad,triangle等

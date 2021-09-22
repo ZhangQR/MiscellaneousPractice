@@ -1,0 +1,368 @@
+fileFormatVersion: 2
+guid: 1d110aaa07fca324b87c980c5f48124e
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 232528478, guid: 43a8bbf65be290d44ba52b94476242b9, type: 3}
+  version: 29
+  projectContext: 2
+  mGraphInstanceData:
+  - graphLabel: Aluminium Close Cell Foam
+    prototypeName: Aluminium Close Cell Foam
+    graphDescIndex: 0
+    generateAllOutputs: 0
+    generateMipMaps: 1
+    preset: " <sbspreset pkgurl=\"pkg://aluminium_close_cell_foam\" label=\"\" >\n 
+      <presetinput identifier=\"$outputsize\" uid=\"3754263254\" type=\"8\" value=\"9,9\"
+      />\n </sbspreset>\n"
+    shaderName: Universal Render Pipeline/Lit
+    materialProperties:
+      shader: {fileID: 4800000, guid: 40565c8d7932ad8448d5bbfbea1da8a9, type: 3}
+      shaderKeywords: _BASEMAP _BUMPMAP _METALLICGLOSSMAP _METALLICSPECGLOSSMAP _NORMALMAP
+        _OCCLUSIONMAP _SPECGLOSSMAP
+      lightmapFlags: 4
+      enableInstancingVariants: 0
+      doubleSidedGI: 0
+      customRenderQueue: 2000
+      texEnvs:
+      - name: _BaseMap
+        texture: {fileID: 7471863216164229925, guid: 1d110aaa07fca324b87c980c5f48124e, type: 3}
+        scale: {x: 0.5, y: 0.5}
+        offset: {x: 0, y: 0}
+      - name: _BumpMap
+        texture: {fileID: -5593130615267960039, guid: 1d110aaa07fca324b87c980c5f48124e, type: 3}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: _DetailAlbedoMap
+        texture: {instanceID: 0}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: _DetailMask
+        texture: {instanceID: 0}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: _DetailNormalMap
+        texture: {instanceID: 0}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: _EmissionMap
+        texture: {instanceID: 0}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: _MainTex
+        texture: {instanceID: 0}
+        scale: {x: 0.5, y: 0.5}
+        offset: {x: 0, y: 0}
+      - name: _MetallicGlossMap
+        texture: {fileID: 1523539149509275396, guid: 1d110aaa07fca324b87c980c5f48124e, type: 3}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: _OcclusionMap
+        texture: {fileID: -3306279308730233825, guid: 1d110aaa07fca324b87c980c5f48124e, type: 3}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: _ParallaxMap
+        texture: {instanceID: 0}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: _SpecGlossMap
+        texture: {fileID: 1191050652259675950, guid: 1d110aaa07fca324b87c980c5f48124e, type: 3}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: unity_Lightmaps
+        texture: {instanceID: 0}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: unity_LightmapsInd
+        texture: {instanceID: 0}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: unity_ShadowMasks
+        texture: {instanceID: 0}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      floats:
+      - name: _AlphaClip
+        float: 0
+      - name: _Blend
+        float: 0
+      - name: _BumpScale
+        float: 1
+      - name: _ClearCoatMask
+        float: 0
+      - name: _ClearCoatSmoothness
+        float: 0
+      - name: _Cull
+        float: 2
+      - name: _Cutoff
+        float: 0.5
+      - name: _DetailAlbedoMapScale
+        float: 1
+      - name: _DetailNormalMapScale
+        float: 1
+      - name: _DstBlend
+        float: 0
+      - name: _EnvironmentReflections
+        float: 1
+      - name: _GlossMapScale
+        float: 0
+      - name: _Glossiness
+        float: 0
+      - name: _GlossyReflections
+        float: 0
+      - name: _Metallic
+        float: 0
+      - name: _OcclusionStrength
+        float: 1
+      - name: _Parallax
+        float: 0.005
+      - name: _QueueOffset
+        float: 0
+      - name: _ReceiveShadows
+        float: 1
+      - name: _Smoothness
+        float: 1
+      - name: _SmoothnessTextureChannel
+        float: 0
+      - name: _SpecularHighlights
+        float: 1
+      - name: _SrcBlend
+        float: 1
+      - name: _Surface
+        float: 0
+      - name: _WorkflowMode
+        float: 1
+      - name: _ZWrite
+        float: 1
+      colors:
+      - name: _BaseColor
+        color: {r: 1, g: 1, b: 1, a: 1}
+      - name: _Color
+        color: {r: 1, g: 1, b: 1, a: 1}
+      - name: _EmissionColor
+        color: {r: 0, g: 0, b: 0, a: 1}
+      - name: _SpecColor
+        color: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    outputDescList:
+    - outputName: diffuse
+      identifier: diffuse
+      usageName: diffuse
+      channelStr: diffuse
+      label: Diffuse
+      usage: 0
+      bImage: 1
+      bNumerical: 0
+      bLinear: 0
+    - outputName: baseColor
+      identifier: basecolor
+      usageName: baseColor
+      channelStr: baseColor
+      label: Base Color
+      usage: 1
+      bImage: 1
+      bNumerical: 0
+      bLinear: 0
+    - outputName: normal
+      identifier: normal
+      usageName: normal
+      channelStr: normal
+      label: Normal
+      usage: 7
+      bImage: 1
+      bNumerical: 0
+      bLinear: 1
+    - outputName: specular
+      identifier: specular
+      usageName: specular
+      channelStr: specular
+      label: Specular
+      usage: 11
+      bImage: 1
+      bNumerical: 0
+      bLinear: 0
+    - outputName: glossiness
+      identifier: glossiness
+      usageName: glossiness
+      channelStr: glossiness
+      label: Glossiness
+      usage: 14
+      bImage: 1
+      bNumerical: 0
+      bLinear: 1
+    - outputName: roughness
+      identifier: roughness
+      usageName: roughness
+      channelStr: roughness
+      label: Roughness
+      usage: 15
+      bImage: 1
+      bNumerical: 0
+      bLinear: 1
+    - outputName: metallic
+      identifier: metallic
+      usageName: metallic
+      channelStr: metallic
+      label: Metallic
+      usage: 34
+      bImage: 1
+      bNumerical: 0
+      bLinear: 1
+    - outputName: height
+      identifier: height
+      usageName: height
+      channelStr: height
+      label: Height
+      usage: 9
+      bImage: 1
+      bNumerical: 0
+      bLinear: 1
+    - outputName: ambientOcclusion
+      identifier: ambientocclusion
+      usageName: ambientOcclusion
+      channelStr: ambientOcclusion
+      label: Ambient Occlusion
+      usage: 5
+      bImage: 1
+      bNumerical: 0
+      bLinear: 1
+    - outputName: anisotropyLevel
+      identifier: anisotropylevel
+      usageName: anisotropyLevel
+      channelStr: anisotropyLevel
+      label: Anisotropy Level
+      usage: 16
+      bImage: 1
+      bNumerical: 0
+      bLinear: 1
+    - outputName: anisotropyAngle
+      identifier: anisotropyangle
+      usageName: anisotropyAngle
+      channelStr: anisotropyAngle
+      label: Anisotropy Angle
+      usage: 17
+      bImage: 1
+      bNumerical: 0
+      bLinear: 1
+    texturePackingList:
+    - targetName: diffuse
+      components:
+      - sourceName: diffuse
+        from: 0
+        to: 3
+    - targetName: baseColor
+      components:
+      - sourceName: baseColor
+        from: 0
+        to: 3
+    - targetName: normal
+      components:
+      - sourceName: normal
+        from: 0
+        to: 3
+    - targetName: specular
+      components:
+      - sourceName: smoothness
+        from: 0
+        to: 3
+    - targetName: glossiness
+      components:
+      - sourceName: glossiness
+        from: 0
+        to: 3
+    - targetName: roughness
+      components:
+      - sourceName: roughness
+        from: 0
+        to: 3
+    - targetName: metallic
+      components:
+      - sourceName: smoothness
+        from: 0
+        to: 3
+    - targetName: height
+      components:
+      - sourceName: height
+        from: 0
+        to: 3
+    - targetName: ambientOcclusion
+      components:
+      - sourceName: ambientOcclusion
+        from: 0
+        to: 3
+    - targetName: anisotropyLevel
+      components:
+      - sourceName: anisotropyLevel
+        from: 0
+        to: 3
+    - targetName: anisotropyAngle
+      components:
+      - sourceName: anisotropyAngle
+        from: 0
+        to: 3
+    textureParameters:
+    - textureName: Aluminium Close Cell Foam - diffuse
+      wrapMode: 0
+      filterMode: 1
+      aniso: 1
+    - textureName: Aluminium Close Cell Foam - baseColor
+      wrapMode: 0
+      filterMode: 1
+      aniso: 1
+    - textureName: Aluminium Close Cell Foam - normal
+      wrapMode: 0
+      filterMode: 1
+      aniso: 1
+    - textureName: Aluminium Close Cell Foam - specular
+      wrapMode: 0
+      filterMode: 1
+      aniso: 1
+    - textureName: Aluminium Close Cell Foam - glossiness
+      wrapMode: 0
+      filterMode: 1
+      aniso: 1
+    - textureName: Aluminium Close Cell Foam - roughness
+      wrapMode: 0
+      filterMode: 1
+      aniso: 1
+    - textureName: Aluminium Close Cell Foam - metallic
+      wrapMode: 0
+      filterMode: 1
+      aniso: 1
+    - textureName: Aluminium Close Cell Foam - height
+      wrapMode: 0
+      filterMode: 1
+      aniso: 1
+    - textureName: Aluminium Close Cell Foam - ambientOcclusion
+      wrapMode: 0
+      filterMode: 1
+      aniso: 1
+    - textureName: Aluminium Close Cell Foam - anisotropyLevel
+      wrapMode: 0
+      filterMode: 1
+      aniso: 1
+    - textureName: Aluminium Close Cell Foam - anisotropyAngle
+      wrapMode: 0
+      filterMode: 1
+      aniso: 1
+    colorSpaceList: []
+    inputTextureMap: []
+    targetSettingList:
+    - label: Default
+      bOverride: 0
+      bLockRatio: 1
+      textureWidth: 512
+      textureHeight: 512
+      textureFormatMode: 0
+      normalCompressed: 0
+      bGenerateOnLoad: 1
+    material: {fileID: -3561744010903831099, guid: 1d110aaa07fca324b87c980c5f48124e, type: 3}
+    generatedTextures:
+    - {fileID: 7471863216164229925, guid: 1d110aaa07fca324b87c980c5f48124e, type: 3}
+    - {fileID: -5593130615267960039, guid: 1d110aaa07fca324b87c980c5f48124e, type: 3}
+    - {fileID: 1191050652259675950, guid: 1d110aaa07fca324b87c980c5f48124e, type: 3}
+    - {fileID: 1523539149509275396, guid: 1d110aaa07fca324b87c980c5f48124e, type: 3}
+    - {fileID: -3306279308730233825, guid: 1d110aaa07fca324b87c980c5f48124e, type: 3}
