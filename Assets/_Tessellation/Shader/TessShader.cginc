@@ -18,8 +18,10 @@
             //这个函数应用在domain函数中，用来空间转换的函数
             {
                 VertexOutput o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.vertex = v.vertex;
+                //o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = v.uv;
+                //o.uv = TRANSFORM_TEX(v.uv,_MainTex);
                 o.tangent = v.tangent;
                 o.normal = v.normal;
                 return o;
@@ -56,12 +58,16 @@
 
                 float _TessellationUniform;
                 OutputPatchConstant hsconst (InputPatch<TessVertex,3> patch){
+                    float minDist = 1.0;
+                    float maxDist = 5.0;
+                    float4 distanceFactor = UnityDistanceBasedTess(patch[0].vertex,
+                        patch[1].vertex,patch[2].vertex,minDist,maxDist,_TessellationUniform);
                     //定义曲面细分的参数
                     OutputPatchConstant o;
-                    o.edge[0] = _TessellationUniform;
-                    o.edge[1] = _TessellationUniform;
-                    o.edge[2] = _TessellationUniform;
-                    o.inside  = _TessellationUniform;
+                    o.edge[0] = distanceFactor.x;
+                    o.edge[1] = distanceFactor.y;
+                    o.edge[2] = distanceFactor.z;
+                    o.inside  = distanceFactor.w;
                     return o; 
                 }
 
@@ -86,7 +92,7 @@
 			        v.normal = patch[0].normal*bary.x + patch[1].normal*bary.y + patch[2].normal*bary.z;
 			        v.uv = patch[0].uv*bary.x + patch[1].uv*bary.y + patch[2].uv*bary.z;
 
-                    VertexOutput o = vert (v);
+                    VertexOutput o = vert(v);
                     return o;
                 }
             #endif

@@ -31,6 +31,6 @@ Material:
     m_Floats:
     - _DisplacementStrength: 0.1
     - _Smoothness: 0.94
-    - _TessellationUniform: 64
+    - _TessellationUniform: 1
     m_Colors: []
   m_BuildTextureStacks: []

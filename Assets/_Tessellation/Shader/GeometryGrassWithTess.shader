@@ -5,7 +5,7 @@ Shader "URPPractice/GrassWithTess"
         [Header(shading)]
         _TopColor ("Top Color", Color) = (1,1,1,1)
         _BottomColor ("Bottom Color", Color) = (1,1,1,1)
-        _TranslucentGain("Translucent Gain",Range(0,1)) = 0.05
+        // _TranslucentGain("Translucent Gain",Range(0,1)) = 0.05
         _BladeWidth ("Blade Width",float) = 0.05
         _BladeWidthRandom ("Blade Width Random",float) = 0.02
         _BladeHeight ("Blade Height",float) = 0.5
@@ -15,7 +15,7 @@ Shader "URPPractice/GrassWithTess"
         _WindStrength("Wind Strength", float) = 1
         _TessellationUniform("Tessellation Uniform", Range(1, 64)) = 1
         _BendRotationRandom("Bend Rotation Random", Range(0,1)) = 0.2
-        _BladeForward("B1ade Forward Amount", Float) = 0.38
+        _BladeForward("Blade Forward Amount", Float) = 0.38
         _BladeCurve("Blade Curvature Amount", Range(1,4)) = 2  
     }
     
@@ -23,9 +23,10 @@ Shader "URPPractice/GrassWithTess"
     #include "UnityCG.cginc"
     #include "Lighting.cginc"
     #include "Autolight.cginc"
+    #include "Tessellation.cginc"
     #include "TessShader.cginc"
 
-    #define BLADE_SEGMENT 3
+    #define BLADE_SEGMENTS 3
 
 
     // Simple noise function,sourced from http://answers.unity.com/answers/524136/view.html
@@ -61,7 +62,7 @@ Shader "URPPractice/GrassWithTess"
     float _BladeWidthRandom;
     sampler2D _WindDistortionMap;
     float4 _WindDistortionMap_ST;
-    float _WindStength;
+    float _WindStrength;
     float3 _WindFrequency;
     float _BendRotationRandom;
     float _BladeForward;
@@ -103,9 +104,9 @@ Shader "URPPractice/GrassWithTess"
         return CreateGeoOutput(localPosition,uv);
     }
 
-    [maxvertexcount(BLADE_SEGMENT * 2 + 1)]//定义最大输出点，此处输出三角形所以是3
-    // [maxvertexcount(3)]//定义最大输出点，此处输出三角形所以是3
-    //输出使用了TriangleStream，每个顶点都用到了结构体geometryOutput
+    [maxvertexcount(BLADE_SEGMENTS * 2 + 1)]//定义最大输出点
+    // [maxvertexcount(3)]//定义最大输出点
+    //输出使用了 TriangleStream，每个顶点都用到了结构体 geometryOutput
     void geo(triangle VertexOutput IN[3] : SV_POSITION, inout TriangleStream<geometryOutput> triStream)
     {
         //抛弃顶点本身位置信息的影响，所以采用切线空间，类比法线
@@ -121,9 +122,10 @@ Shader "URPPractice/GrassWithTess"
         // Wind
         float2 uv = pos.xz * _WindDistortionMap_ST.xy + _WindDistortionMap_ST.zw +
             _WindFrequency * _Time.y;
-        float2 windSample = (tex2Dlod(_WindDistortionMap,float4(uv,0,0)).xy * 2 -1) * _WindStength;
+        float2 windSample = (tex2Dlod(_WindDistortionMap,float4(uv,0,0)).xy * 2 -1) * _WindStrength;
         float3 wind = normalize(float3(windSample.x,windSample.y,0));
         float3x3 windRotation = AngleAxis3x3(UNITY_PI * windSample,wind);
+        //float3x3 windRotation = AngleAxis3x3(UNITY_PI * windSample,float3(0,1,0));
 
         // 构建矩阵
         // 朝向矩阵
@@ -138,8 +140,9 @@ Shader "URPPractice/GrassWithTess"
         vTangent.y,vBitangent.y,vNormal.y,
         vTangent.z,vBitangent.z,vNormal.z
         );
-        // float3x3 transformationMat =mul(mul(mul(tangentToLocal,windRotation),facingRotationMatrix),bendRotationMatrix);
-        float3x3 transformationMat = mul(tangentToLocal,facingRotationMatrix);
+        float3x3 transformationMat =mul(mul(mul(tangentToLocal,windRotation),facingRotationMatrix),bendRotationMatrix);
+        //float3x3 transformationMat =mul(mul(tangentToLocal,facingRotationMatrix),bendRotationMatrix);
+        //float3x3 transformationMat = mul(tangentToLocal,facingRotationMatrix);
 
         float3x3 transformationMatrixFacing = mul(tangentToLocal,facingRotationMatrix);
 
@@ -147,9 +150,9 @@ Shader "URPPractice/GrassWithTess"
         // triStream.Append(CreateGeoOutput(pos + mul(transformationMat,float3(width,0,0)),float2(0,0)));
         // triStream.Append(CreateGeoOutput(pos + mul(transformationMat,float3(-width,0,0)),float2(1,0)));
         // triStream.Append(CreateGeoOutput(pos + mul(transformationMat,float3(0,0,height)),float2(0.5,1)));
-        for(int i = 0;i<BLADE_SEGMENT;i++)
+        for(int i = 0;i<BLADE_SEGMENTS;i++)
         {
-            float t = i/(float)BLADE_SEGMENT;
+            float t = i/(float)BLADE_SEGMENTS;
             float segmentHeight = height *t;
             float segmentWidth = width * (1-t);
             float segmentForward = pow(t,_BladeCurve) * forward;
@@ -162,6 +165,7 @@ Shader "URPPractice/GrassWithTess"
         triStream.Append(GenerateGrassVertex(pos,0,height,forward,
                 float2(0.5,1),transformationMat));
     }
+
     ENDCG
         
 
@@ -189,7 +193,7 @@ Shader "URPPractice/GrassWithTess"
 
             float4 _TopColor;
             float4 _BottomColor;
-            float _TranslucentGain;
+            // float _TranslucentGain;
            
             fixed4 frag (geometryOutput i,fixed facing : VFACE) : SV_Target
             {
