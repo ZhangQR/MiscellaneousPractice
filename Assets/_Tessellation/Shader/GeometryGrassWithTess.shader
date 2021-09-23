@@ -13,7 +13,7 @@ Shader "URPPractice/GrassWithTess"
         _WindDistortionMap("Wind Distortion Map", 2D) = "white" {}
         _WindFrequency ("Wind Frequency", Vector) = (0.05, 0.05, 0, 0)
         _WindStrength("Wind Strength", float) = 1
-        _TessellationUniforn("Tessellation Uniform", Range(1, 64)) = 1
+        _TessellationUniform("Tessellation Uniform", Range(1, 64)) = 1
         _BendRotationRandom("Bend Rotation Random", Range(0,1)) = 0.2
         _BladeForward("B1ade Forward Amount", Float) = 0.38
         _BladeCurve("Blade Curvature Amount", Range(1,4)) = 2  
@@ -23,6 +23,7 @@ Shader "URPPractice/GrassWithTess"
     #include "UnityCG.cginc"
     #include "Lighting.cginc"
     #include "Autolight.cginc"
+    #include "TessShader.cginc"
 
     #define BLADE_SEGMENT 3
 
@@ -72,19 +73,19 @@ Shader "URPPractice/GrassWithTess"
         float2 uv : TEXCOORD0;
     };
 
-    struct vertexInput
-    {
-        float4 vertex : POSITION;
-        float3 normal : NORMAL;
-        float4 tangent : TANGENT;
-    };
-
-    struct vertexOutput
-    {
-        float3 normal : NORMAL;
-        float4 vertex : SV_POSITION;
-        float4 tangent : TANGENT;
-    };
+    // struct vertexInput
+    // {
+    //     float4 vertex : POSITION;
+    //     float3 normal : NORMAL;
+    //     float4 tangent : TANGENT;
+    // };
+    //
+    // struct vertexOutput
+    // {
+    //     float3 normal : NORMAL;
+    //     float4 vertex : SV_POSITION;
+    //     float4 tangent : TANGENT;
+    // };
 
     geometryOutput CreateGeoOutput(float3 pos,float2 uv)// 用于空间转换的函数
     {
@@ -103,8 +104,9 @@ Shader "URPPractice/GrassWithTess"
     }
 
     [maxvertexcount(BLADE_SEGMENT * 2 + 1)]//定义最大输出点，此处输出三角形所以是3
+    // [maxvertexcount(3)]//定义最大输出点，此处输出三角形所以是3
     //输出使用了TriangleStream，每个顶点都用到了结构体geometryOutput
-    void geo(triangle vertexOutput IN[3] : SV_POSITION, inout TriangleStream<geometryOutput> triStream)
+    void geo(triangle VertexOutput IN[3] : SV_POSITION, inout TriangleStream<geometryOutput> triStream)
     {
         //抛弃顶点本身位置信息的影响，所以采用切线空间，类比法线
         float3 pos = IN[0].vertex;
@@ -136,7 +138,8 @@ Shader "URPPractice/GrassWithTess"
         vTangent.y,vBitangent.y,vNormal.y,
         vTangent.z,vBitangent.z,vNormal.z
         );
-        float3x3 transformationMat =mul(mul(mul(tangentToLocal,windRotation),facingRotationMatrix),bendRotationMatrix);
+        // float3x3 transformationMat =mul(mul(mul(tangentToLocal,windRotation),facingRotationMatrix),bendRotationMatrix);
+        float3x3 transformationMat = mul(tangentToLocal,facingRotationMatrix);
 
         float3x3 transformationMatrixFacing = mul(tangentToLocal,facingRotationMatrix);
 
