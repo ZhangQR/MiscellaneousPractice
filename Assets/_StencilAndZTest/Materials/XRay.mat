@@ -20,7 +20,9 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Ints: []
-    m_Floats: []
+    m_Floats:
+    - _Threshold: 0.01
     m_Colors:
+    - _HighlightColor: {r: 0, g: 0.9411765, b: 0.41853154, a: 1}
     - _XRayColor: {r: 0.5613208, g: 0.97425324, b: 1, a: 1}
   m_BuildTextureStacks: []
